@@ -18,9 +18,10 @@ public class IngresoObservacionCierre extends JFrame {
     private GestorRI gestor;
     private List<MotivoTipo> motivosDisponibles;
 
-    // Constructor de la pantalla, recibe el gestor como siempre
-    public IngresoObservacionCierre(GestorRI gestor) {
+    // Constructor de la pantalla, recibe el gestor y la lista de motivos disponibles
+    public IngresoObservacionCierre(GestorRI gestor, List<MotivoTipo> motivosDisponibles) {
         this.gestor = gestor;
+        this.motivosDisponibles = motivosDisponibles;
 
         // Configuración básica de la ventana
         setTitle("Ingreso de Observación de Cierre");
@@ -56,4 +57,3 @@ public class IngresoObservacionCierre extends JFrame {
         });
     }
 }
-

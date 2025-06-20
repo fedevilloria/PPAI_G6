@@ -32,7 +32,25 @@ public class ConfirmacionCierreOrden extends JFrame {
                 boolean exito = gestor.confirmarCierreInspeccion(listaDeEstados);
 
                 if (exito) {
-                    JOptionPane.showMessageDialog(null, "✅ Orden cerrada correctamente.");
+                    // Obtener los estados finales
+                    String estadoOrden = gestor.getOrdenSeleccionada().getEstado().getNombre();
+                    String estadoSismografo = gestor.getOrdenSeleccionada()
+                            .getEstacionSismologica()
+                            .getSismografo()
+                            .getUltimoCambioEstado()
+                            .getEstado()
+                            .getNombre();
+
+                    // Mostrar mensaje con los estados actualizados
+                    JOptionPane.showMessageDialog(
+                            null,
+                            "✅ Orden cerrada correctamente.\n\n" +
+                                    "Estado final de la Orden: " + estadoOrden + "\n" +
+                                    "Estado final del Sismógrafo: " + estadoSismografo,
+                            "Confirmación Final",
+                            JOptionPane.INFORMATION_MESSAGE
+                    );
+
                     dispose();  // cerramos la pantalla
                 } else {
                     JOptionPane.showMessageDialog(null, "❌ No se pudo cerrar la orden. Revisá los datos.");
@@ -41,4 +59,3 @@ public class ConfirmacionCierreOrden extends JFrame {
         });
     }
 }
-

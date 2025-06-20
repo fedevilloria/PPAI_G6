@@ -55,6 +55,7 @@ public class MainCU37Test {
 
         // Crear gestor
         GestorRI gestor = new GestorRI(sesion, ordenes);
+        gestor.setEstadosDisponibles(estadosDelSistema);
 
         //Iniciar el menú principal con datos cargados
         SwingUtilities.invokeLater(() -> new MenuPrincipal(gestor, motivos, estadosDelSistema));

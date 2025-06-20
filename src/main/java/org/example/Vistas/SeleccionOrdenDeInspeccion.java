@@ -18,12 +18,16 @@ public class SeleccionOrdenDeInspeccion extends JFrame {
     private JComboBox<OrdenDeInspeccion> comboOrdenes;
     private JButton btnConfirmar;
 
-    // Referencia al gestor, para delegar la lógica de negocio
+    // Referencia al gestor y listas necesarias
     private GestorRI gestor;
+    private List<MotivoTipo> motivos;
+    private List<Estado> estados;
 
-    // Constructor de la vista. Recibe el gestor como parámetro.
-    public SeleccionOrdenDeInspeccion(GestorRI gestor) {
+    // Constructor principal
+    public SeleccionOrdenDeInspeccion(GestorRI gestor, List<MotivoTipo> motivos, List<Estado> estados) {
         this.gestor = gestor;
+        this.motivos = motivos;
+        this.estados = estados;
 
         // Configuración de la ventana
         setTitle("Seleccionar Orden de Inspección");
@@ -47,18 +51,13 @@ public class SeleccionOrdenDeInspeccion extends JFrame {
                 gestor.tomarSelecOrdenDeInspeccion(ordenSeleccionada);
 
                 // Ingresamos a la pantalla de observaciones de cierre
-                new IngresoObservacionCierre(gestor);
+                new IngresoObservacionCierre(gestor, motivos);
 
                 // Cierro la pantalla actual de selección de orden
                 dispose();
             }
         });
     }
-
-    public SeleccionOrdenDeInspeccion(GestorRI gestor, List<MotivoTipo> motivos, List<Estado> estados) {
-        this(gestor);
-    }
-
 
     // Metodo que carga las órdenes filtradas en el comboBox
     private void cargarOrdenes() {

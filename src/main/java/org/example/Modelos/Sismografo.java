@@ -64,10 +64,10 @@ public class Sismografo {
         this.ultimoCambioEstado = cambio;
     }
 
-    public void ponerEnReparacion(Estado estadoFueraDeServicio, Empleado responsable, Map<MotivoTipo, String> motivosYComentarios) {
+    public void ponerEnReparacion(Estado nuevoEstado, Empleado empleado, List<MotivoFueraDeServicio> motivos) {
         LocalDateTime fechaHoraActual = LocalDateTime.now();
 
-        //Finalizar el cambio de estado actual
+        // Finalizar el cambio de estado actual
         for (CambioEstado cambio : historialEstados) {
             if (cambio.esActual()) {
                 cambio.setFechaHoraFin(fechaHoraActual);
@@ -75,32 +75,20 @@ public class Sismografo {
             }
         }
 
-        //Crear la lista de motivos con sus comentarios
-        List<MotivoFueraDeServicio> motivos = new ArrayList<>();
-
-        for (Map.Entry<MotivoTipo, String> entry : motivosYComentarios.entrySet()) {
-            MotivoTipo tipo = entry.getKey();
-            String comentario = entry.getValue();
-
-            MotivoFueraDeServicio motivo = new MotivoFueraDeServicio();
-            motivo.setMotivoTipo(tipo);
-            motivo.setComentario(comentario);
-            motivos.add(motivo);
-        }
-
-        //Crear el nuevo CambioEstado usando el constructor completo
+        // Crear el nuevo CambioEstado
         CambioEstado nuevoCambio = new CambioEstado(
-                estadoFueraDeServicio,
+                nuevoEstado,
                 fechaHoraActual,
-                null, // fechaHoraFin en null, porque es el estado actual
+                null, // el nuevo cambio de estado aún está activo
                 motivos,
-                responsable
+                empleado
         );
 
-        //Guardar como nuevo estado actual
+        // Agregar a historial y actualizar puntero
         historialEstados.add(nuevoCambio);
         this.ultimoCambioEstado = nuevoCambio;
     }
+
 
 
 

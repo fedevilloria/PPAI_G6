@@ -2,6 +2,7 @@ package org.example.Vistas;
 
 import org.example.Gestores.GestorRI;
 import org.example.Modelos.MotivoTipo;
+import org.example.Modelos.Estado;
 
 import javax.swing.*;
 import java.awt.*;
@@ -87,8 +88,8 @@ public class SeleccionMotivosYComentarios extends JFrame {
                 // Si pasa la validación, guardamos en el Gestor
                 gestor.tomarMotivosYComentarios(motivosYComentarios);
 
-                // (Acá luego abriremos la pantalla de confirmación de cierre)
-                JOptionPane.showMessageDialog(null, "Motivos y comentarios cargados correctamente.");
+                // Abrir pantalla de confirmación de cierre
+                new ConfirmacionCierreOrden(gestor, gestor.getEstadosDisponibles());
                 dispose();
             }
         });
