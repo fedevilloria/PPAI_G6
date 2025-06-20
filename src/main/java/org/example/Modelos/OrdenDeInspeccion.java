@@ -11,17 +11,20 @@ public class OrdenDeInspeccion {
     private String observacionCierre;
     private Empleado empleado;
     private Estado estado;
+    private EstacionSismologica estacionSismologica;
 
     public OrdenDeInspeccion() {
     }
 
-    public OrdenDeInspeccion(LocalDateTime fechaHoraInicio, LocalDateTime fechaHoraCierre, LocalDateTime fechaHoraFinalizacion, Integer nroOrden, String observacionCierre, Empleado empleado) {
+    public OrdenDeInspeccion(LocalDateTime fechaHoraInicio, LocalDateTime fechaHoraCierre, LocalDateTime fechaHoraFinalizacion, Integer nroOrden, String observacionCierre, Empleado empleado, Estado estado, EstacionSismologica estacionSismologica) {
         this.fechaHoraInicio = fechaHoraInicio;
         this.fechaHoraCierre = fechaHoraCierre;
         this.fechaHoraFinalizacion = fechaHoraFinalizacion;
         this.nroOrden = nroOrden;
         this.observacionCierre = observacionCierre;
         this.empleado = empleado;
+        this.estado = estado;
+        this.estacionSismologica = estacionSismologica;
     }
 
     public LocalDateTime getFechaHoraInicio() {
@@ -86,6 +89,19 @@ public class OrdenDeInspeccion {
 
     public boolean esCompletamenteRealizada(){
         return estado.esCompletamenteRealizada();
+    }
+
+    public EstacionSismologica getEstacionSismologica() {
+        return estacionSismologica;
+    }
+
+    public void setEstacionSismologica(EstacionSismologica estacionSismologica) {
+        this.estacionSismologica = estacionSismologica;
+    }
+
+    @Override
+    public String toString() {
+        return "Orden N° " + nroOrden + " - " + fechaHoraFinalizacion.toLocalDate();
     }
 
 }

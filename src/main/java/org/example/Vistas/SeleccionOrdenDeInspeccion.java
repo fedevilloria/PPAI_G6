@@ -1,6 +1,8 @@
 package org.example.Vistas;
 
 import org.example.Gestores.GestorRI;
+import org.example.Modelos.Estado;
+import org.example.Modelos.MotivoTipo;
 import org.example.Modelos.OrdenDeInspeccion;
 
 import javax.swing.*;
@@ -52,6 +54,11 @@ public class SeleccionOrdenDeInspeccion extends JFrame {
             }
         });
     }
+
+    public SeleccionOrdenDeInspeccion(GestorRI gestor, List<MotivoTipo> motivos, List<Estado> estados) {
+        this(gestor);
+    }
+
 
     // Metodo que carga las órdenes filtradas en el comboBox
     private void cargarOrdenes() {

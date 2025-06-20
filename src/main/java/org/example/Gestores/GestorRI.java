@@ -1,6 +1,8 @@
 package org.example.Gestores;
 
 import org.example.Modelos.*;
+
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -49,18 +51,44 @@ public class GestorRI {
     }
 
     // Metodo que toma la observación ingresada y la asigna a la orden seleccionada
-    public void tomarIngresoObservacionCierreInspeccion(String observacion) {
-        this.ordenSeleccionada.setObservacionCierre(observacion);
+    public void tomarIngresoObservacionCierreInspeccion(String observacionCierre) {
+        this.ordenSeleccionada.setObservacionCierre(observacionCierre);
     }
 
     //Metodo para validar que la observacion este seleccionada y con su comentario asociado.
     public boolean estaListoParaMotivos() {
-        return ordenSeleccionada != null && observacionCierre != null && !observacionCierre.isEmpty();
+        return ordenSeleccionada != null
+                && ordenSeleccionada.getObservacionCierre() != null
+                && !ordenSeleccionada.getObservacionCierre().trim().isEmpty();
     }
+
 
     //Metodo para guardar motivos seleccionados + comentarios
     public void tomarMotivosYComentarios(Map<MotivoTipo, String> motivosYComentarios) {
         this.motivosYComentarios = motivosYComentarios;
     }
+
+    //Metodo para confirmar el cierre de orden de inspección y cambiarle el estado.
+    public boolean confirmarCierreInspeccion(List<Estado> todosLosEstados) {
+        if (ordenSeleccionada == null || observacionCierre == null || motivosYComentarios == null || motivosYComentarios.isEmpty()) {
+            return false;
+        }
+
+        Estado estadoCerrada = null;
+        for (Estado e : todosLosEstados) {
+            if (e.getNombre().equalsIgnoreCase("Cerrada") &&
+                    e.getAmbito().equalsIgnoreCase("Orden de Inspeccion")) {
+                estadoCerrada = e;
+                break;
+            }
+        }
+
+        if (estadoCerrada == null) return false;
+
+        ordenSeleccionada.setEstado(estadoCerrada);
+        ordenSeleccionada.setFechaHoraCierre(LocalDateTime.now());
+        return true;
+    }
+
 }
 

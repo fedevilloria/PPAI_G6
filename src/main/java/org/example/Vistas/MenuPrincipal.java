@@ -1,8 +1,8 @@
 package org.example.Vistas;
 
 import org.example.Gestores.GestorRI;
-import org.example.Modelos.OrdenDeInspeccion;
-import org.example.Modelos.Sesion;
+import org.example.Modelos.Estado;
+import org.example.Modelos.MotivoTipo;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -11,15 +11,16 @@ import java.util.List;
 
 public class MenuPrincipal extends JFrame {
     private JPanel panelPrincipal;
-    private JButton btnCerrarOrdenInspeccion;
+    private JButton btnCerrarOrden;
 
-    private Sesion sesion; // Sesión actual
-    private List<OrdenDeInspeccion> ordenesDeInspeccion; // Datos de prueba
+    private GestorRI gestor;
+    private List<MotivoTipo> motivos;
+    private List<Estado> estados;
 
-    // Constructor: recibe la sesión y las órdenes como parámetros
-    public MenuPrincipal(Sesion sesion, List<OrdenDeInspeccion> ordenesDeInspeccion) {
-        this.sesion = sesion;
-        this.ordenesDeInspeccion = ordenesDeInspeccion;
+    public MenuPrincipal(GestorRI gestor, List<MotivoTipo> motivos, List<Estado> estados) {
+        this.gestor = gestor;
+        this.motivos = motivos;
+        this.estados = estados;
 
         setTitle("Menú Principal");
         setSize(400, 200);
@@ -28,15 +29,11 @@ public class MenuPrincipal extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
 
-        btnCerrarOrdenInspeccion.addActionListener(new ActionListener() {
+        btnCerrarOrden.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
-                // Se crea el Gestor (NuevoCierreOrdenInspeccion())
-                GestorRI gestor = new GestorRI(sesion, ordenesDeInspeccion);
-
-                // Se abre la primera pantalla de selección de orden
-                new SeleccionOrdenDeInspeccion(gestor);
+                new SeleccionOrdenDeInspeccion(gestor, motivos, estados);
+                //dispose();
             }
         });
     }

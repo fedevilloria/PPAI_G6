@@ -13,7 +13,7 @@ public class IngresoObservacionCierre extends JFrame {
 
     // Componentes de la vista
     private JPanel panelPrincipal;
-    private JTextArea textAreaObservacion;
+    private JTextArea txtObservacion;
     private JButton btnConfirmar;
     private GestorRI gestor;
     private List<MotivoTipo> motivosDisponibles;
@@ -35,20 +35,25 @@ public class IngresoObservacionCierre extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // Toma el texto escrito por el usuario
-                String observacion = textAreaObservacion.getText();
+                String observacion = txtObservacion.getText().trim();
 
-                // Llama al gestor para registrar la observación
+                // Validar si está vacía
+                if (observacion.isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Debe ingresar una observación válida.");
+                    return;
+                }
+
+                // Si es válida, continuar
                 gestor.tomarIngresoObservacionCierreInspeccion(observacion);
 
                 if (gestor.estaListoParaMotivos()) {
                     new SeleccionMotivosYComentarios(gestor, motivosDisponibles);
                     dispose();
                 } else {
-                    JOptionPane.showMessageDialog(null, "Debe ingresar una observación válida.");
+                    JOptionPane.showMessageDialog(null, "Ocurrió un error inesperado. Verifique los datos.");
                 }
-                // Cierra la ventana actual
-                dispose();
             }
         });
     }
 }
+

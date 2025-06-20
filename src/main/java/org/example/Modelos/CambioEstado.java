@@ -1,22 +1,26 @@
 package org.example.Modelos;
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class CambioEstado {
 
     private LocalDateTime fechaHoraInicio;
     private LocalDateTime fechaHoraFin;
-    private MotivoFueraDeServicio motivoFueraDeServicio;
+    private List<MotivoFueraDeServicio> motivosFueraDeServicio;;
     private Empleado empleadoResponsable;
+    private Estado estado;
 
     public CambioEstado() {
     }
 
-    public CambioEstado(LocalDateTime fechaHoraInicio, LocalDateTime fechaHoraFin, MotivoFueraDeServicio motivoFueraDeServicio, Empleado empleadoResponsable) {
+    public CambioEstado(Estado estado, LocalDateTime fechaHoraInicio, LocalDateTime fechaHoraFin, List<MotivoFueraDeServicio> motivosFueraDeServicio, Empleado empleadoResponsable) {
+        this.estado = estado;
         this.fechaHoraInicio = fechaHoraInicio;
         this.fechaHoraFin = fechaHoraFin;
-        this.motivoFueraDeServicio = motivoFueraDeServicio;
+        this.motivosFueraDeServicio = motivosFueraDeServicio;
         this.empleadoResponsable = empleadoResponsable;
     }
+
 
     public LocalDateTime getFechaHoraInicio() {
         return fechaHoraInicio;
@@ -34,16 +38,37 @@ public class CambioEstado {
         this.fechaHoraFin = fechaHoraFin;
     }
 
-    public MotivoFueraDeServicio getMotivoFueraDeServicio() {
-        return motivoFueraDeServicio;
+    public List<MotivoFueraDeServicio> getMotivosFueraDeServicio() {
+        return motivosFueraDeServicio;
     }
 
-    public void setMotivoFueraDeServicio(MotivoFueraDeServicio motivoFueraDeServicio) {
-        this.motivoFueraDeServicio = motivoFueraDeServicio;
+    public void setMotivosFueraDeServicio(List<MotivoFueraDeServicio> motivosFueraDeServicio) {
+        this.motivosFueraDeServicio = motivosFueraDeServicio;
     }
 
-    public void esActual(){
-
+    public Empleado getEmpleadoResponsable() {
+        return empleadoResponsable;
     }
+
+    public void setEmpleadoResponsable(Empleado empleadoResponsable) {
+        this.empleadoResponsable = empleadoResponsable;
+    }
+
+    public Estado getEstado() {
+        return estado;
+    }
+
+    public void setEstado(Estado estado) {
+        this.estado = estado;
+    }
+
+    public void agregarMotivo(MotivoFueraDeServicio motivo) {
+        motivosFueraDeServicio.add(motivo);
+    }
+
+    public boolean esActual() {
+        return fechaHoraFin == null;
+    }
+
 
 }
