@@ -12,6 +12,7 @@ public class ConfirmacionCierreOrden extends JFrame {
 
     private JPanel panelPrincipal;
     private JButton btnConfirmar;
+    private JButton btnCancelar;
     private GestorRI gestor;
     private List<Estado> listaDeEstados;
 

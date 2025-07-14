@@ -7,7 +7,7 @@ public class OrdenDeInspeccion {
     private LocalDateTime fechaHoraInicio;
     private LocalDateTime fechaHoraCierre; // cuando actualiza el estado a cerrada setea su fecha de cierre.
     private LocalDateTime fechaHoraFinalizacion; //para ordenes completamente realizadas
-    private Integer nroOrden;
+    private Integer numeroDeOrden;
     private String observacionCierre;
     private Empleado empleado;
     private Estado estado;
@@ -16,11 +16,11 @@ public class OrdenDeInspeccion {
     public OrdenDeInspeccion() {
     }
 
-    public OrdenDeInspeccion(LocalDateTime fechaHoraInicio, LocalDateTime fechaHoraCierre, LocalDateTime fechaHoraFinalizacion, Integer nroOrden, String observacionCierre, Empleado empleado, Estado estado, EstacionSismologica estacionSismologica) {
+    public OrdenDeInspeccion(LocalDateTime fechaHoraInicio, LocalDateTime fechaHoraCierre, LocalDateTime fechaHoraFinalizacion, Integer numeroDeOrden, String observacionCierre, Empleado empleado, Estado estado, EstacionSismologica estacionSismologica) {
         this.fechaHoraInicio = fechaHoraInicio;
         this.fechaHoraCierre = fechaHoraCierre;
         this.fechaHoraFinalizacion = fechaHoraFinalizacion;
-        this.nroOrden = nroOrden;
+        this.numeroDeOrden = numeroDeOrden;
         this.observacionCierre = observacionCierre;
         this.empleado = empleado;
         this.estado = estado;
@@ -51,12 +51,12 @@ public class OrdenDeInspeccion {
         this.fechaHoraFinalizacion = fechaHoraFinalizacion;
     }
 
-    public Integer getNroOrden() {
-        return nroOrden;
+    public Integer getNumeroDeOrden() {
+        return numeroDeOrden;
     }
 
-    public void setNroOrden(Integer nroOrden) {
-        this.nroOrden = nroOrden;
+    public void setNumeroDeOrden(Integer numeroDeOrden) {
+        this.numeroDeOrden = numeroDeOrden;
     }
 
     public String getObservacionCierre() {
@@ -83,12 +83,28 @@ public class OrdenDeInspeccion {
         this.estado = estado;
     }
 
-    public void esEmpleado(){
-
+    public boolean esEmpleado(Empleado empleado) {
+        return this.getEmpleado().equals(empleado);
     }
 
     public boolean esCompletamenteRealizada(){
         return estado.esCompletamenteRealizada();
+    }
+
+    public String getDatos() {
+        // Obtener número de orden y fecha
+        Integer numeroOrden = this.getNumeroDeOrden();
+        LocalDateTime fechaFin = this.getFechaHoraFinalizacion();
+
+        // Obtener datos desde la estación sismológica asociada
+        String nombreEstacion = this.getEstacionSismologica().getNombreEstacionSismologica();
+        Integer identificadorSismografo = this.getEstacionSismologica().getSismografo().getIdentificadorSismografo();
+
+        // Texto descriptivo con todos los datos
+        return "Orden N°: " + numeroOrden +
+                ", Finalizada: " + fechaFin +
+                ", Estación: " + nombreEstacion +
+                ", Sismógrafo ID: " + identificadorSismografo;
     }
 
     public EstacionSismologica getEstacionSismologica() {
@@ -101,7 +117,24 @@ public class OrdenDeInspeccion {
 
     @Override
     public String toString() {
-        return "Orden N° " + nroOrden + " - " + fechaHoraFinalizacion.toLocalDate();
+        return "Orden N° " + numeroDeOrden + " - " + fechaHoraFinalizacion.toLocalDate();
     }
 
 }
+////// public String getNombreEstacionSismologica() {
+//    // Delega la obtención del nombre a la Estación
+//    return estacion.getNombre();
+//}
+//
+//public String getIdentificadorSismografo() {
+//    // Delega la obtención del identificador a la Estación, que a su vez lo delega al Sismógrafo
+//    return estacion.getIdentificadorSismografo();
+//}
+// public boolean esDeEmpleado(Empleado empleado) {
+//    // Asumimos que tienes un atributo 'responsable' de tipo Empleado.
+//    // En un sistema real, compararíamos por ID, aquí comparamos la instancia.
+//    if (this.responsable == null || empleado == null) {
+//        return false;
+//    }
+//    return this.responsable.equals(empleado);
+//}

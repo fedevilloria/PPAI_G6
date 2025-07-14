@@ -22,22 +22,47 @@ public class GestorRI {
         this.estadosDisponibles = estados;
     }
 
+
+    //Busca el empleado logueado
     public Empleado buscarEmpleadoLogueado() {
-        Usuario usuario = sesion.obtenerUsuarioLogueado();
-        return usuario.getEmpleado();
+        return sesion.obtenerUsuarioLogueado();
     }
 
-    public List<OrdenDeInspeccion> buscarOrdenesDelInspeccion() {
+    //busca las ordenes completamente realizadas
+    public List<OrdenDeInspeccion> buscarOrdenesDeInspeccion() {
+        // 1. Obtener el empleado logueado
+        Empleado empleadoLogueado = sesion.obtenerUsuarioLogueado();
+
+        // 2. Lista para almacenar las órdenes filtradas
         List<OrdenDeInspeccion> ordenesFiltradas = new ArrayList<>();
+
+        // 3. Recorrer todas las órdenes y aplicar filtros
         for (OrdenDeInspeccion orden : ordenesDeInspeccion) {
-            if (orden.esCompletamenteRealizada()) {
+            // Solo las que pertenezcan al empleado y estén completamente realizadas
+            if (orden.esEmpleado(empleadoLogueado) && orden.esCompletamenteRealizada()) {
                 ordenesFiltradas.add(orden);
             }
         }
-        ordenesFiltradas.sort(Comparator.comparing(OrdenDeInspeccion::getFechaHoraFinalizacion));
+
+        // 4. Mostrar los datos por consola (luego se usarán en pantalla)
+        for (OrdenDeInspeccion orden : ordenesFiltradas) {
+            System.out.println(orden.getDatos()); // getDatos devuelve un String con los campos pedidos
+        }
+
+        //5. Ordenar por fecha de finalizacion
+        ordenarOrdenesDeInspeccion(ordenesFiltradas);
+
+        // 6. Devolver las órdenes filtradas y ordenadas
         return ordenesFiltradas;
     }
 
+    // las ordena por fecha de finalizacion
+    private void ordenarOrdenesDeInspeccion(List<OrdenDeInspeccion> ordenesFiltradas) {
+        ordenesFiltradas.sort(Comparator.comparing(OrdenDeInspeccion::getFechaHoraFinalizacion));
+    }
+
+
+    //Toma la orden de inspección seleccionada por el RI
     public void tomarSelecOrdenDeInspeccion(OrdenDeInspeccion ordenSeleccionada) {
         this.ordenSeleccionada = ordenSeleccionada;
     }

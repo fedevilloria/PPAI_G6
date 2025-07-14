@@ -16,6 +16,7 @@ public class SeleccionMotivosYComentarios extends JFrame {
 
     private JPanel panelPrincipal;
     private JButton btnConfirmar;
+    private JButton btnCancelar;
 
     private List<JCheckBox> checkBoxes;               // Lista de checkboxes
     private Map<MotivoTipo, JTextField> camposTexto;  // Relaciona cada motivo con su campo de texto
@@ -58,6 +59,8 @@ public class SeleccionMotivosYComentarios extends JFrame {
 
         btnConfirmar = new JButton("Confirmar");
         panelPrincipal.add(btnConfirmar);
+        btnCancelar = new JButton("Cancelar");
+        panelPrincipal.add(btnCancelar);
 
         scrollPane.setViewportView(panelPrincipal);
         setContentPane(scrollPane);
@@ -90,6 +93,12 @@ public class SeleccionMotivosYComentarios extends JFrame {
 
                 // Abrir pantalla de confirmación de cierre
                 new ConfirmacionCierreOrden(gestor, gestor.getEstadosDisponibles());
+                dispose();
+            }
+        });
+        btnCancelar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
                 dispose();
             }
         });

@@ -17,6 +17,7 @@ public class SeleccionOrdenDeInspeccion extends JFrame {
     private JPanel panelPrincipal;
     private JComboBox<OrdenDeInspeccion> comboOrdenes;
     private JButton btnConfirmar;
+    private JButton btnCancelar;
 
     // Referencia al gestor y listas necesarias
     private GestorRI gestor;
@@ -57,12 +58,20 @@ public class SeleccionOrdenDeInspeccion extends JFrame {
                 dispose();
             }
         });
+        btnCancelar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dispose();
+            }
+        });
     }
+
+
 
     // Metodo que carga las órdenes filtradas en el comboBox
     private void cargarOrdenes() {
         // Le pido al gestor las órdenes completamente realizadas
-        List<OrdenDeInspeccion> ordenes = gestor.buscarOrdenesDelInspeccion();
+        List<OrdenDeInspeccion> ordenes = gestor.buscarOrdenesDeInspeccion();
 
         // Las agrego al comboBox
         for (OrdenDeInspeccion orden : ordenes) {

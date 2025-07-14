@@ -70,6 +70,5 @@ public class Empleado {
     }
 
     public void esEmpleadoReparacion(){
-
     }
 }

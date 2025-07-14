@@ -18,7 +18,6 @@ public class MainCU37Test {
 
         List<Estado> estadosDelSistema = Arrays.asList(estadoRealizada, estadoCerrada, estadoFS);
 
-
         // Crear Rol
         Rol rol = new Rol("Empleado responsable del cierre de las ordenes de inspección","Responsable de Inspeccion");
 
@@ -57,7 +56,8 @@ public class MainCU37Test {
         GestorRI gestor = new GestorRI(sesion, ordenes);
         gestor.setEstadosDisponibles(estadosDelSistema);
 
-        //Iniciar el menú principal con datos cargados
-        SwingUtilities.invokeLater(() -> new MenuPrincipal(gestor, motivos, estadosDelSistema));
+
+        // La llamada para crear la ventana:
+        SwingUtilities.invokeLater(() -> new MenuPrincipal(sesion, todasLasOrdenes, motivos, estadosDelSistema));
     }
 }

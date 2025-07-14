@@ -9,20 +9,20 @@ public class EstacionSismologica {
     private boolean certificacionDeAdquisicion;
     private double latitud;
     private double longitud;
-    private String nombre;
+    private String nombreEstacionSismologica;
     private Integer nroCertificacionAdquisicion;
     private Sismografo sismografo;
 
     public EstacionSismologica() {
     }
 
-    public EstacionSismologica(Integer codEstacion, LocalDate fechaSolicitudCertificacion, boolean certificacionDeAdquisicion, double latitud, double longitud, String nombre, Integer nroCertificacionAdquisicion, Sismografo sismografo) {
+    public EstacionSismologica(Integer codEstacion, LocalDate fechaSolicitudCertificacion, boolean certificacionDeAdquisicion, double latitud, double longitud, String nombreEstacionSismologica, Integer nroCertificacionAdquisicion, Sismografo sismografo) {
         this.codEstacion = codEstacion;
         this.fechaSolicitudCertificacion = fechaSolicitudCertificacion;
         this.certificacionDeAdquisicion = certificacionDeAdquisicion;
         this.latitud = latitud;
         this.longitud = longitud;
-        this.nombre = nombre;
+        this.nombreEstacionSismologica = nombreEstacionSismologica;
         this.nroCertificacionAdquisicion = nroCertificacionAdquisicion;
         this.sismografo = sismografo;
     }
@@ -67,12 +67,12 @@ public class EstacionSismologica {
         this.longitud = longitud;
     }
 
-    public String getNombre() {
-        return nombre;
+    public String getNombreEstacionSismologica() {
+        return nombreEstacionSismologica;
     }
 
     public void setNombre(String nombre) {
-        this.nombre = nombre;
+        this.nombreEstacionSismologica = nombre;
     }
 
     public Integer getNroCertificacionAdquisicion() {

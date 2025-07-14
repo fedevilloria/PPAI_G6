@@ -15,6 +15,7 @@ public class IngresoObservacionCierre extends JFrame {
     private JPanel panelPrincipal;
     private JTextArea txtObservacion;
     private JButton btnConfirmar;
+    private JButton btnCancelar;
     private GestorRI gestor;
     private List<MotivoTipo> motivosDisponibles;
 
@@ -53,6 +54,12 @@ public class IngresoObservacionCierre extends JFrame {
                 } else {
                     JOptionPane.showMessageDialog(null, "Ocurrió un error inesperado. Verifique los datos.");
                 }
+            }
+        });
+        btnCancelar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dispose();
             }
         });
     }

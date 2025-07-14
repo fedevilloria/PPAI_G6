@@ -44,11 +44,9 @@ public class Estado {
     }
 
     public void esAmbitoOrdenDeInspeccion(){
-
     }
 
     public void esCerrada(){
-
     }
 
     public void esAmbitoSismografo(){

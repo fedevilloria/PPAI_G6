@@ -1,6 +1,8 @@
 package org.example.Modelos;
 
 import java.time.LocalDateTime;
+import org.example.Modelos.Empleado;
+import org.example.Modelos.Usuario;
 
 public class Sesion {
 
@@ -33,8 +35,8 @@ public class Sesion {
         this.fechaHoraFin = fechaHoraFin;
     }
 
-    public Usuario obtenerUsuarioLogueado() {
-        return usuario;
+    public Empleado obtenerUsuarioLogueado() {
+        return usuario.getEmpleado();
     }
 
     public void setUsuario(Usuario usuario) {

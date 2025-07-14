@@ -13,6 +13,7 @@ public class Sismografo {
     private Integer nroSerie;
     private List<CambioEstado> historialEstados = new ArrayList<>();
     private CambioEstado ultimoCambioEstado;
+    private EstacionSismologica estacionSismologica;
 
     public Sismografo() {
     }
