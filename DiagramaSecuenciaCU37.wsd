@@ -1,0 +1,129 @@
+@startuml CU37
+title CU37 - Dar cierre a orden de inspección de ES
+
+actor "Responsable de Inspecciones (RI)" as RI
+participant PantallaRI as "PantallaRI\n<<boundary>>"
+participant GestorRI as "GestorRI\n<<control>>"
+participant ActualSesion as "Actual:Sesion\n<<entity>>"
+participant LogUsuario as "LogUsuario\n<<entity>>"
+participant OrdenDeInspeccion as "OrdenDeInspeccion\n<<entity>>"
+participant OrdenDeInspeccionEstado as "OrdenDeInspeccionEstado\n<<entity>>"
+participant EstacionSismologica as "EstacionSismologica\n<<entity>>"
+participant Sismografo as "Sismografo\n<<entity>>"
+participant SelecOrdenInspeccion as "SelecOrdenInspeccion\n<<entity>>"
+participant Estado as "Estado\n<<entity>>"
+participant CambioEstado as "CambioEstado\n<<entity>>"
+participant ActualCambioEstado as "ActualCambioEstado\n<<entity>>"
+participant MotivoTipo as "MotivoTipo\n<<entity>>"
+participant Empleado as "Empleado\n<<entity>>"
+participant EmpleadoRol as "EmpleadoRol\n<<entity>>"
+participant NuevoCambioEstado as "NuevoCambioEstado\n<<entity>>"
+participant NuevoMotivosFueraDeServicio as "NuevoMotivosFueraDeServicio\n<<entity>>"
+participant Interfaz as "Interfaz\n<<entity>>"
+participant InterfazEnvioMail as "InterfazEnvioMail\n<<entity>>"
+
+== Inicio ==
+RI -> PantallaRI : opcionCerrarOrdenInspeccion()
+PantallaRI -> PantallaRI : abrirVentana()
+PantallaRI -> GestorRI : NuevoCierreOrdenInspeccion()
+GestorRI -> GestorRI : buscarEmpleadoLogueado()
+GestorRI -> ActualSesion : obtenerUsuarioLogueado()
+ActualSesion -> LogUsuario : getEmpleado()
+
+GestorRI -> GestorRI : buscarOrdenesDeInspeccion()
+loop "Ordenes de Inspección" mientras existan ordenes de inspeccion
+    GestorRI -> OrdenDeInspeccion : esEmpleado()
+    GestorRI -> OrdenDeInspeccion : esCompletamenteRealizada()
+    OrdenDeInspeccion -> OrdenDeInspeccionEstado : esCompletamenteRealizada()
+    GestorRI -> OrdenDeInspeccion : getDatos()
+    OrdenDeInspeccion -> OrdenDeInspeccion : getNumeroDeOrden()
+    OrdenDeInspeccion -> OrdenDeInspeccion : getFechaFinalizacion()
+    OrdenDeInspeccion -> EstacionSismologica : getNombreEstacionSismologica()
+    OrdenDeInspeccion -> EstacionSismologica : getIdentificadorSismografo()
+    EstacionSismologica -> Sismografo : getIdentificadorSismografo()
+end
+
+GestorRI -> GestorRI : ordenarOrdenesDeInspeccion()
+GestorRI -> PantallaRI : mostrarOrdenesDeInspeccionRealizadas()
+GestorRI -> PantallaRI : pedirOrdenesDeInspeccionRealizadas()
+
+RI -> PantallaRI : tomarSelecOrdenDeInspeccion()
+PantallaRI -> GestorRI : tomarSelecOrdenDeInspeccion()
+GestorRI -> PantallaRI : pedirObservacionCierreInspeccion()
+RI -> PantallaRI : tomarIngresoObservacionCierreInspeccion()
+PantallaRI -> GestorRI : tomarIngresoObservacionCierreInspeccion()
+
+GestorRI -> GestorRI : habilitarActualizarSituacionSismografo()
+
+GestorRI -> GestorRI : buscarTiposDeMotivos()
+
+GestorRI -> MotivoTipo : *getDescripcion()
+
+GestorRI -> PantallaRI : mostratMotivosTiposParaSeleccion()
+GestorRI -> PantallaRI : pedirMotivosTipoParaSeleccionYComentario()
+
+loop "para Seleccionar Motivos"
+   RI -> PantallaRI : tomarSeleccionMotivosTipos()
+   PantallaRI -> GestorRI : tomarSeleccionMotivosTipos()
+   RI -> PantallaRI : tomarIngresoComentarioMotivo()
+   PantallaRI -> GestorRI : tomarIngresoComentarioMotivo() 
+end
+
+GestorRI -> PantallaRI : pedirConfirmacionParaCerrarOrdenDeInspeccion()
+RI -> PantallaRI : tomarConfirmacionParaCerrarOrdenDeInspeccion()
+PantallaRI -> GestorRI : tomarConfirmacionparaCerrarOrdenDeInspeccion()
+
+GestorRI -> GestorRI : validarExistenciaObservaciones()
+GestorRI -> GestorRI : validarMotivosMinimos()
+GestorRI -> GestorRI : buscarEstadoCerradaOrdenInspeccion()
+
+loop "para Estado Orden  Inspeccion" mientras existan estados 
+   GestorRI -> Estado : esAmbitoOrdenDeInspeccion()
+   GestorRI -> Estado : esCerrada()
+end 
+
+GestorRI -> GestorRI : tomarFechaHoraActual()
+GestorRI -> GestorRI : cerrarOrdenInspeccion()
+GestorRI -> SelecOrdenInspeccion : cerrar()
+
+SelecOrdenInspeccion -> SelecOrdenInspeccion : setEstado()
+SelecOrdenInspeccion -> SelecOrdenInspeccion : setFechaHoraCierre()
+
+GestorRI -> GestorRI : buscarEstadoFueraDeServicioParaSismografo()
+
+loop "para Estado Sismografo" mientras existan estados
+   GestorRI -> Estado : esAmbitoSismografo()
+   GestorRI -> Estado : esFueraDeServicio()
+end
+
+GestorRI -> GestorRI : cambiarEstadoSismografo()
+GestorRI -> Sismografo : ponerEnReparacion()
+Sismografo -> Sismografo : buscarUltimoCambioDeEstado()
+Sismografo -> CambioEstado : *esEstadoActual()
+Sismografo -> actualCambioEstado : setFechaFin()
+Sismografo --> nuevoCambioEstado : new()
+Sismografo -> Sismografo : setEstadoActual()
+nuevoCambioEstado -> nuevoCambioEstado : setEstado()
+nuevoCambioEstado -> nuevoCambioEstado : setFechaHoraFueraDeServicio()
+nuevoCambioEstado -> nuevoCambioEstado : setEmpleado()
+nuevoCambioEstado -> nuevoCambioEstado : crearMotivoFueraDeServicio()
+
+nuevoCambioEstado --> nuevoMotivosFueraDeServicio : *new()
+
+GestorRI -> GestorRI : buscarMailsResponsablesDeReparaciones()
+
+loop para Envio Notificacion [mientras existan responsables de reparacion y sus mails]
+   GestorRI -> Empleado : esResponsableDeReparacion()
+   Empleado -> EmpleadoRol : esResponsableDeReparacion()
+   GestorRI -> Empleado : obtenerMail() 
+end
+
+GestorRI -> GestorRI : publicarEnMail()
+GestorRI -> Interfaz : *publicarEnMonitor
+GestorRI -> GestorRI : enviarMail()
+GestorRI -> InterfazEnvioMail : enviarMail()
+
+GestorRI -> GestorRI : finCU()
+
+@enduml
+
