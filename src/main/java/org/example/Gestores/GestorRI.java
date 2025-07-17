@@ -72,12 +72,14 @@ public class GestorRI {
         this.observacionCierre = observacionCierre; // Lo guardamos también por si hace falta validarlo
     }
 
+    //Paso 4 y 5
     public boolean estaListoParaMotivos() {
         return ordenSeleccionada != null
                 && ordenSeleccionada.getObservacionCierre() != null
                 && !ordenSeleccionada.getObservacionCierre().trim().isEmpty();
     }
 
+    /*
     public void tomarMotivosYComentarios(Map<MotivoTipo, String> motivosYComentarios) {
         this.motivosYComentarios = motivosYComentarios;
     }
@@ -129,6 +131,9 @@ public class GestorRI {
 
         return true;
     }
+    */
+
+
 
     public OrdenDeInspeccion getOrdenSeleccionada() {
         return ordenSeleccionada;
