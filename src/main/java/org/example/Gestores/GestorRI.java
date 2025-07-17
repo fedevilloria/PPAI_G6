@@ -110,6 +110,27 @@ public class GestorRI {
                 && !ordenSeleccionada.getObservacionCierre().trim().isEmpty();
     }
 
+    public boolean validarExistenciaObservaciones() {
+        return ordenSeleccionada != null
+                && ordenSeleccionada.getObservacionCierre() != null
+                && !ordenSeleccionada.getObservacionCierre().trim().isEmpty();
+    }
+
+    public boolean validarMotivosMinimos() {
+        if (motivosYComentarios == null || motivosYComentarios.isEmpty()) {
+            return false;
+        }
+
+        // Validar que tenga un comentario no vacío:
+        for (String comentario : motivosYComentarios.values()) {
+            if (comentario != null && !comentario.trim().isEmpty()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     /*
      Metodo viejo: integrando tus cambios.
      */
@@ -118,20 +139,14 @@ public class GestorRI {
             return false;
         }
 
-        Estado estadoCerrada = null;
-        for (Estado e : todosLosEstados) {
-            if (e.getNombre().equalsIgnoreCase("Cerrada") &&
-                    e.getAmbito().equalsIgnoreCase("Orden de Inspeccion")) {
-                estadoCerrada = e;
-                break;
-            }
-        }
-
+        Estado estadoCerrada = buscarEstadoCerradoOrdenInspeccion(todosLosEstados);
         if (estadoCerrada == null) return false;
 
-        ordenSeleccionada.setEstado(estadoCerrada);
-        ordenSeleccionada.setFechaHoraCierre(LocalDateTime.now());
+        LocalDateTime fechaHoraActual = tomarFechaHoraActual();
+        cerrarOrdenInspeccion(estadoCerrada, fechaHoraActual);
 
+
+        // Buscar estado 'Fuera de Servicio' para el sismógrafo
         Estado estadoFueraDeServicio = null;
         for (Estado e : todosLosEstados) {
             if (e.getNombre().equalsIgnoreCase("Fuera de Servicio") &&
@@ -143,19 +158,45 @@ public class GestorRI {
 
         if (estadoFueraDeServicio == null) return false;
 
+        // Crear lista de motivos
         List<MotivoFueraDeServicio> listaMotivos = new ArrayList<>();
         for (Map.Entry<MotivoTipo, String> entry : motivosYComentarios.entrySet()) {
             MotivoFueraDeServicio motivo = new MotivoFueraDeServicio(entry.getValue(), entry.getKey());
             listaMotivos.add(motivo);
-
-            // Tus cambios: también setea comentario en MotivoTipo (si fuera necesario)
-            entry.getKey().setComentario(entry.getValue());
         }
 
+        // Cambiar estado del sismógrafo
         Empleado empleado = buscarEmpleadoLogueado();
         Sismografo sismografo = ordenSeleccionada.getEstacionSismologica().getSismografo();
         sismografo.ponerEnReparacion(estadoFueraDeServicio, empleado, listaMotivos);
 
         return true;
     }
+
+    public OrdenDeInspeccion getOrdenSeleccionada() {
+        return ordenSeleccionada;
+    }
+
+    public List<Estado> getEstadosDisponibles() {
+        return this.estadosDisponibles;
+    }
+    private Estado buscarEstadoCerradoOrdenInspeccion(List<Estado> estados) {
+        for (Estado estado : estados) {
+            if (estado.esAmbitoOrdenDeInspeccion() && estado.esCerrado()) {
+                return estado;
+            }
+        }
+        return null;
+    }
+
+    private LocalDateTime tomarFechaHoraActual() {
+        return LocalDateTime.now();
+    }
+
+    private void cerrarOrdenInspeccion(Estado estadoCerrado, LocalDateTime fechaHoraActual) {
+        if (ordenSeleccionada != null && estadoCerrado != null && fechaHoraActual != null) {
+            ordenSeleccionada.cerrar(estadoCerrado, fechaHoraActual);
+        }
+    }
+
 }

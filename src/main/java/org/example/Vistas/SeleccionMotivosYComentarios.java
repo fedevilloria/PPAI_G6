@@ -86,7 +86,7 @@ public class SeleccionMotivosYComentarios extends JFrame {
                 }
 
                 // Cambio-Viki: Llamadas del diagrama de secuencia
-                // RI -> PantallaRI : tomarSeleccionMotivosTipos()
+                // RI -> PantallaRI: tomarSeleccionMotivosTipos()
                 //PantallaRI -> GestorRI : tomarSeleccionMotivosTipos()
                 //RI -> PantallaRI : tomarIngresoComentarioMotivo()
                 //PantallaRI -> GestorRI : tomarIngresoComentarioMotivo()

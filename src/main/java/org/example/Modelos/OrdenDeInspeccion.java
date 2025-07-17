@@ -115,6 +115,11 @@ public class OrdenDeInspeccion {
         this.estacionSismologica = estacionSismologica;
     }
 
+    public void cerrar(Estado estadoCerrado, LocalDateTime fechaHoraActual) {
+        setEstado(estadoCerrado);
+        setFechaHoraCierre(fechaHoraActual);
+    }
+
     @Override
     public String toString() {
         return "Orden N° " + numeroDeOrden + " - " + fechaHoraFinalizacion.toLocalDate();

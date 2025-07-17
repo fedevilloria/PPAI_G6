@@ -39,23 +39,24 @@ public class Estado {
         this.ambito = ambito;
     }
 
+    public boolean esCerrado() {
+        return "Cerrada".equalsIgnoreCase(nombre);
+    }
+
+    public boolean esAmbitoOrdenDeInspeccion() {
+        return "Orden de Inspeccion".equalsIgnoreCase(ambito);
+    }
+
     public boolean esCompletamenteRealizada() {
-        return nombre.equals("Completamente Realizada");
+        return "Completamente Realizada".equalsIgnoreCase(nombre);
     }
 
-    public void esAmbitoOrdenDeInspeccion(){
+    public boolean esFueraDeServicio() {
+        return "Fuera de Servicio".equalsIgnoreCase(nombre);
     }
 
-    public void esCerrada(){
+    public boolean esAmbitoSismografo() {
+        return "Sismografo".equalsIgnoreCase(ambito);
     }
-
-    public void esAmbitoSismografo(){
-
-    }
-
-    public void esFueraDeServicio(){
-
-    }
-
 
 }
