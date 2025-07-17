@@ -42,14 +42,14 @@ public class MenuPrincipal extends JFrame {
         btnCerrarOrdenInspeccion.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Cuando se hace clic, se llama al método que inicia el caso de uso.
+                // Cuando se hace clic, se llama al metodo que inicia el caso de uso.
                 opcionCerrarOrdenInspeccion();
             }
         });
     }
 
     /**
-     * Este método se ejecuta cuando el usuario hace clic en el botón.
+     * Este metodo se ejecuta cuando el usuario hace clic en el botón.
      * Representa el flujo que inicia en la pantalla.
      */
     private void opcionCerrarOrdenInspeccion() {
