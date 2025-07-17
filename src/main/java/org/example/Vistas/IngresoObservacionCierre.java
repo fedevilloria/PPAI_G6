@@ -36,20 +36,17 @@ public class IngresoObservacionCierre extends JFrame {
         btnConfirmar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Toma el texto escrito por el usuario
                 String observacion = txtObservacion.getText().trim();
 
-                // Validar si está vacía
                 if (observacion.isEmpty()) {
                     JOptionPane.showMessageDialog(null, "Debe ingresar una observación válida.");
                     return;
                 }
 
-                // Si es válida, continuar
                 gestor.tomarIngresoObservacionCierreInspeccion(observacion);
 
-                if (gestor.estaListoParaMotivos()) {
-                    new SeleccionMotivosYComentarios(gestor, motivosDisponibles);
+                if (gestor.habilitarActualizarSituacionSismografo()) {
+                    new SeleccionMotivosYComentarios(gestor);
                     dispose();
                 } else {
                     JOptionPane.showMessageDialog(null, "Ocurrió un error inesperado. Verifique los datos.");

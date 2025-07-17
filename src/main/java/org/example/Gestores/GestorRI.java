@@ -1,6 +1,7 @@
 package org.example.Gestores;
 
 import org.example.Modelos.*;
+import org.example.Modelos.MotivoTipo;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -12,131 +13,85 @@ public class GestorRI {
     private String observacionCierre;
     private Map<MotivoTipo, String> motivosYComentarios;
     private List<Estado> estadosDisponibles;
+    private List<MotivoTipo> motivosDisponibles; //Viki: Se agregan motivos disponibles
+    private boolean situacionSismografoHabilitada = false;
 
-    public GestorRI(Sesion sesion, List<OrdenDeInspeccion> ordenesDeInspeccion) {
+    public GestorRI() {
+        this.ordenesDeInspeccion = new ArrayList<>();
+        this.motivosYComentarios = new HashMap<>();
+    }
+
+    public GestorRI(Sesion sesion, List<OrdenDeInspeccion> ordenes) {
+        this();
         this.sesion = sesion;
-        this.ordenesDeInspeccion = ordenesDeInspeccion;
+        this.ordenesDeInspeccion = ordenes;
     }
 
-    public void setEstadosDisponibles(List<Estado> estados) {
-        this.estadosDisponibles = estados;
+    public void setMotivosDisponibles(List<MotivoTipo> motivosDisponibles) {
+        this.motivosDisponibles = motivosDisponibles;
     }
 
-
-    //Busca el empleado logueado
-    public Empleado buscarEmpleadoLogueado() {
-        return sesion.obtenerUsuarioLogueado();
+    public List<OrdenDeInspeccion> getOrdenesDeInspeccion() {
+        return ordenesDeInspeccion;
     }
 
-    //busca las ordenes completamente realizadas
-    public List<OrdenDeInspeccion> buscarOrdenesDeInspeccion() {
-        // 1. Obtener el empleado logueado
-        Empleado empleadoLogueado = sesion.obtenerUsuarioLogueado();
-
-        // 2. Lista para almacenar las órdenes filtradas
-        List<OrdenDeInspeccion> ordenesFiltradas = new ArrayList<>();
-
-        // 3. Recorrer todas las órdenes y aplicar filtros
-        for (OrdenDeInspeccion orden : ordenesDeInspeccion) {
-            // Solo las que pertenezcan al empleado y estén completamente realizadas
-            if (orden.esEmpleado(empleadoLogueado) && orden.esCompletamenteRealizada()) {
-                ordenesFiltradas.add(orden);
-            }
+    public void tomarSeleccionOrden(OrdenDeInspeccion orden) {
+        this.ordenSeleccionada = orden;
+    }
+    public void habilitarActualizarSituacionSismografo() {
+        if (ordenSeleccionada == null) {
+            throw new IllegalStateException("No hay una orden seleccionada");
         }
 
-        // 4. Mostrar los datos por consola (luego se usarán en pantalla)
-        for (OrdenDeInspeccion orden : ordenesFiltradas) {
-            System.out.println(orden.getDatos()); // getDatos devuelve un String con los campos pedidos
+        // Por ahora simplemente marcamos un flag interno para indicar que se habilitó
+        this.situacionSismografoHabilitada = true;
+    }
+
+
+    //Paso 6-Viki: Pantalla consulta motivos disponibles al Gestor - Faltaba - Self del Gestor
+    public List<MotivoTipo> buscarTiposDeMotivos() {
+        return this.motivosDisponibles != null ? this.motivosDisponibles : new ArrayList<>();
+    }
+
+    public List<Estado> getEstadosDisponibles() {
+        return estadosDisponibles;
+    }
+
+    public void setEstadosDisponibles(List<Estado> estadosDisponibles) {
+        this.estadosDisponibles = estadosDisponibles;
+    }
+
+    //Paso 7-a-Viki: Vista llama al GestorRI pasando los motivos seleccionados
+    public void tomarSeleccionMotivosTipos(List<MotivoTipo> motivos) {
+        Map<MotivoTipo, String> vacios = new HashMap<>();
+        for (MotivoTipo m : motivos) {
+            vacios.put(m, "");
         }
-
-        //5. Ordenar por fecha de finalizacion
-        ordenarOrdenesDeInspeccion(ordenesFiltradas);
-
-        // 6. Devolver las órdenes filtradas y ordenadas
-        return ordenesFiltradas;
+        this.motivosYComentarios = vacios;
     }
 
-    // las ordena por fecha de finalizacion
-    private void ordenarOrdenesDeInspeccion(List<OrdenDeInspeccion> ordenesFiltradas) {
-        ordenesFiltradas.sort(Comparator.comparing(OrdenDeInspeccion::getFechaHoraFinalizacion));
-    }
-
-
-    //Toma la orden de inspección seleccionada por el RI
-    public void tomarSelecOrdenDeInspeccion(OrdenDeInspeccion ordenSeleccionada) {
-        this.ordenSeleccionada = ordenSeleccionada;
-    }
-
-    public void tomarIngresoObservacionCierreInspeccion(String observacionCierre) {
-        this.ordenSeleccionada.setObservacionCierre(observacionCierre);
-        this.observacionCierre = observacionCierre; // Lo guardamos también por si hace falta validarlo
-    }
-
-    public boolean estaListoParaMotivos() {
-        return ordenSeleccionada != null
-                && ordenSeleccionada.getObservacionCierre() != null
-                && !ordenSeleccionada.getObservacionCierre().trim().isEmpty();
-    }
-
-    public void tomarMotivosYComentarios(Map<MotivoTipo, String> motivosYComentarios) {
+    //Paso 7-b-Viki: Vista llama al GestorRI pasando los comentarios por motivo
+    public void tomarIngresoComentarioMotivo(Map<MotivoTipo, String> motivosYComentarios) {
         this.motivosYComentarios = motivosYComentarios;
     }
 
-    public boolean confirmarCierreInspeccion(List<Estado> todosLosEstados) {
-        if (ordenSeleccionada == null || observacionCierre == null || motivosYComentarios == null || motivosYComentarios.isEmpty()) {
-            return false;
-        }
+    public void tomarObservacionCierre(String observacion) {
+        this.observacionCierre = observacion;
+    }
 
-        // Buscar estado 'Cerrada' para la orden
-        Estado estadoCerrada = null;
-        for (Estado e : todosLosEstados) {
-            if (e.getNombre().equalsIgnoreCase("Cerrada") &&
-                    e.getAmbito().equalsIgnoreCase("Orden de Inspeccion")) {
-                estadoCerrada = e;
-                break;
+    public void confirmarCierre() {
+        if (ordenSeleccionada != null) {
+            for (Map.Entry<MotivoTipo, String> entry : motivosYComentarios.entrySet()) {
+                MotivoTipo motivo = entry.getKey();
+                String comentario = entry.getValue();
+                motivo.setComentario(comentario); // Asignar comentario al motivo
             }
+
+            ordenSeleccionada.setObservacionCierre(observacionCierre); // Observación final
         }
-
-        if (estadoCerrada == null) return false;
-
-        // Asignar estado y fecha de cierre a la orden
-        ordenSeleccionada.setEstado(estadoCerrada);
-        ordenSeleccionada.setFechaHoraCierre(LocalDateTime.now());
-
-        // Buscar estado 'Fuera de Servicio' para el sismógrafo
-        Estado estadoFueraDeServicio = null;
-        for (Estado e : todosLosEstados) {
-            if (e.getNombre().equalsIgnoreCase("Fuera de Servicio") &&
-                    e.getAmbito().equalsIgnoreCase("Sismografo")) {
-                estadoFueraDeServicio = e;
-                break;
-            }
-        }
-
-        if (estadoFueraDeServicio == null) return false;
-
-        // Crear lista de motivos
-        List<MotivoFueraDeServicio> listaMotivos = new ArrayList<>();
-        for (Map.Entry<MotivoTipo, String> entry : motivosYComentarios.entrySet()) {
-            MotivoFueraDeServicio motivo = new MotivoFueraDeServicio(entry.getValue(), entry.getKey());
-            listaMotivos.add(motivo);
-        }
-
-        // Cambiar estado del sismógrafo
-        Empleado empleado = buscarEmpleadoLogueado();
-        Sismografo sismografo = ordenSeleccionada.getEstacionSismologica().getSismografo();
-        sismografo.ponerEnReparacion(estadoFueraDeServicio, empleado, listaMotivos);
-
-        return true;
     }
 
     public OrdenDeInspeccion getOrdenSeleccionada() {
         return ordenSeleccionada;
     }
-
-    public List<Estado> getEstadosDisponibles() {
-        return this.estadosDisponibles;
-    }
-
-
 }
