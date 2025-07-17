@@ -14,7 +14,7 @@ public class MotivoTipo {
 
     //Metodo correcto segun el diagrama de secuencia - Viki
     public String getDescripcion() {
-        return descripcion;
+        return null;
     }
 
     public void setDescripcion(String descripcion) {
