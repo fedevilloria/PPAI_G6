@@ -42,7 +42,7 @@ public class MainCU37Test {
         OrdenDeInspeccion orden = new OrdenDeInspeccion();
         orden.setEstado(estadoRealizada);
         orden.setFechaHoraFinalizacion(LocalDateTime.now().minusHours(5));
-        orden.setNroOrden(001);
+        orden.setNumeroDeOrden(001);
         orden.setEstacionSismologica(estacion);
 
         List<OrdenDeInspeccion> ordenes = List.of(orden);
@@ -57,7 +57,9 @@ public class MainCU37Test {
         gestor.setEstadosDisponibles(estadosDelSistema);
 
 
-        // La llamada para crear la ventana:
-        SwingUtilities.invokeLater(() -> new MenuPrincipal(sesion, todasLasOrdenes, motivos, estadosDelSistema));
+        // La llamada para crear la ventana: Cambio-Viki
+        SwingUtilities.invokeLater(() -> new MenuPrincipal(sesion, ordenes, motivos, estadosDelSistema));
+
+
     }
 }
