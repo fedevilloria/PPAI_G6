@@ -83,8 +83,8 @@ public class OrdenDeInspeccion {
         this.estado = estado;
     }
 
-    public boolean esEmpleado(Empleado empleado) {
-        return this.getEmpleado().equals(empleado);
+    public boolean esEmpleado(Empleado empleadoActual) {
+        return this.empleado != null && this.empleado.equals(empleadoActual);
     }
 
     public boolean esCompletamenteRealizada(){

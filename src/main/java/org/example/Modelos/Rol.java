@@ -29,4 +29,8 @@ public class Rol {
         this.nombre = nombre;
     }
 
+    public boolean esResponsableDeReparacion() {
+        return this.nombre.equalsIgnoreCase("Responsable de Reparación");
+    }
+
 }

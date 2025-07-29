@@ -1,6 +1,8 @@
 package org.example.Gestores;
 
 import org.example.Modelos.*;
+import org.example.Vistas.Interfaz;
+import org.example.Vistas.InterfazEnvioMail;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -14,34 +16,42 @@ public class GestorRI {
     private List<Estado> estadosDisponibles;
     private List<MotivoTipo> motivosDisponibles;
     private boolean situacionSismografoHabilitada = false;
+    private List<Sismografo> sismografosDisponibles;
+    private Interfaz interfaz;
+    private InterfazEnvioMail interfazEnvioMail;
+    private List<String> mailsResponsables = new ArrayList<>();
+    private List<Empleado> empleados = new ArrayList<>();
 
-    public GestorRI(Sesion sesion, List<OrdenDeInspeccion> ordenesDeInspeccion) {
+
+    public GestorRI(Sesion sesion, List<OrdenDeInspeccion> ordenesDeInspeccion, Interfaz interfaz) {
         this.sesion = sesion;
         this.ordenesDeInspeccion = ordenesDeInspeccion;
         this.motivosYComentarios = new HashMap<>();
+        this.interfaz = interfaz;
+    }
+
+    public void setInterfazEnvioMail(InterfazEnvioMail interfazEnvioMail) {
+        this.interfazEnvioMail = interfazEnvioMail;
     }
 
     public void setEstadosDisponibles(List<Estado> estados) {
         this.estadosDisponibles = estados;
     }
 
-    public List<Estado> getEstadosDisponibles() {
-        return this.estadosDisponibles;
+    public void setSismografosDisponibles(List<Sismografo> sismografosDisponibles) {
+        this.sismografosDisponibles = sismografosDisponibles;
     }
 
-    public OrdenDeInspeccion getOrdenSeleccionada() {
-        return ordenSeleccionada;
-    }
-
-    // 🔷 Paso 6: habilitar actualización situación del sismógrafo
-    public void habilitarActualizarSituacionSismografo() {
+    // Paso 6: habilitar actualización situación del sismógrafo
+    public boolean habilitarActualizarSituacionSismografo() {
         if (ordenSeleccionada == null) {
-            throw new IllegalStateException("No hay una orden seleccionada");
+            return false; // Si no hay orden, devuelve false
         }
         this.situacionSismografoHabilitada = true;
+        return true; // Si tod va bien, devuelve true
     }
 
-    // 🔷 Paso 6: devolver motivos disponibles
+    // Paso 6: devolver motivos disponibles
     public void setMotivosDisponibles(List<MotivoTipo> motivosDisponibles) {
         this.motivosDisponibles = motivosDisponibles;
     }
@@ -50,7 +60,7 @@ public class GestorRI {
         return this.motivosDisponibles != null ? this.motivosDisponibles : new ArrayList<>();
     }
 
-    // 🔷 Paso 7-a: registrar motivos seleccionados
+    // Paso 7-a: registrar motivos seleccionados
     public void tomarSeleccionMotivosTipos(List<MotivoTipo> motivos) {
         Map<MotivoTipo, String> vacios = new HashMap<>();
         for (MotivoTipo m : motivos) {
@@ -59,7 +69,7 @@ public class GestorRI {
         this.motivosYComentarios = vacios;
     }
 
-    // 🔷 Paso 7-b: registrar motivos y comentarios
+    // Paso 7-b: registrar motivos y comentarios
     public void tomarIngresoComentarioMotivo(Map<MotivoTipo, String> motivosYComentarios) {
         this.motivosYComentarios = motivosYComentarios;
     }
@@ -180,6 +190,7 @@ public class GestorRI {
     public List<Estado> getEstadosDisponibles() {
         return this.estadosDisponibles;
     }
+
     private Estado buscarEstadoCerradoOrdenInspeccion(List<Estado> estados) {
         for (Estado estado : estados) {
             if (estado.esAmbitoOrdenDeInspeccion() && estado.esCerrado()) {
@@ -197,6 +208,95 @@ public class GestorRI {
         if (ordenSeleccionada != null && estadoCerrado != null && fechaHoraActual != null) {
             ordenSeleccionada.cerrar(estadoCerrado, fechaHoraActual);
         }
+    }
+
+
+    public Estado buscarEstadoFueraDeServicio() {
+        for (Estado estado : estadosDisponibles) {
+            if (estado.esAmbitoSismografo() && estado.esFueraDeServicio()) {
+                return estado;
+            }
+        }
+        return null;
+    }
+
+    public void cambiarEstadoSismografo() {
+        // Buscar el estado 'Fuera de Servicio'
+        Estado estadoFS = buscarEstadoFueraDeServicio();
+
+        if (estadoFS == null) {
+            throw new IllegalStateException("No se encontró el estado 'Fuera de Servicio'");
+        }
+
+        // Obtener el empleado responsable
+        Empleado responsable = buscarEmpleadoLogueado();
+
+        // Crear la lista de motivos desde el map
+        List<MotivoFueraDeServicio> motivos = new ArrayList<>();
+        for (Map.Entry<MotivoTipo, String> entry : motivosYComentarios.entrySet()) {
+            motivos.add(new MotivoFueraDeServicio(entry.getValue(), entry.getKey()));
+        }
+
+        // Buscar el sismógrafo asociado a la estación seleccionada
+        EstacionSismologica estacion = ordenSeleccionada.getEstacionSismologica();
+        Sismografo sismografo = buscarSismografoPorEstacion(estacion);
+
+        if (sismografo == null) {
+            throw new IllegalStateException("No se encontró el sismógrafo para la estación: " + estacion.getNombreEstacionSismologica());
+        }
+
+        // Poner el sismógrafo en reparación
+        sismografo.ponerEnReparacion(estadoFS, responsable, motivos);
+    }
+
+    public Sismografo buscarSismografoPorEstacion(EstacionSismologica estacion) {
+        for (Sismografo sismografo : sismografosDisponibles) {
+            if (sismografo.getEstacionSismologica().equals(estacion)) {
+                return sismografo;
+            }
+        }
+        return null; // Si no se encontró ninguno
+    }
+
+    public void buscarMailsResponsablesDeReparaciones() {
+        for (Empleado e : empleados) {
+            if (e.esResponsableDeReparacion()) {
+                mailsResponsables.add(e.obtenerMail());
+            }
+        }
+    }
+
+    public void publicarEnMail(String contenido) {
+    }
+
+    public void publicarEnMonitor(String mensaje) {
+        interfaz.mostrarEnMonitor(mensaje);
+    }
+
+    private String generarMensajeDeNotificacion() {
+        StringBuilder mensaje = new StringBuilder();
+        mensaje.append("Se notifican tareas de reparación para la orden de inspección:\n"); //Crea el encabezado: "Se notifican tareas de reparación para la orden de inspección:\n"
+        mensaje.append("- Observación de cierre: ").append(observacionCierre).append("\n"); //Agrega la observación de cierre escrita por el usuario: "- Observación de cierre: [lo que haya escrito el usuario]\n"
+        mensaje.append("- Motivos seleccionados:\n"); //Enumera los motivos seleccionados:
+        for (Map.Entry<MotivoTipo, String> entry : motivosYComentarios.entrySet()) {
+            mensaje.append("  · ").append(entry.getKey().getDescripcion()).append(": ").append(entry.getValue()).append("\n");
+        } //getDescripcion() saca la descripción del motivo (ej: "Falla técnica"), entry.getValue() obtiene el comentario asociado a ese motivo (ej: "Se detectó un error en la lectura").
+        mensaje.append("- Fecha: ").append(LocalDateTime.now().toString()); //Agrega la fecha actual: "Fecha: 2025-07-17T16:10:00" (esto se obtiene con LocalDateTime.now().toString()).
+        return mensaje.toString(); //Devuelve el mensaje completo en forma de String.
+    }
+
+    public void enviarMail() {
+        // Buscar responsables
+        buscarMailsResponsablesDeReparaciones();
+
+        // Generar contenido según Observación 2
+        String mensaje = generarMensajeDeNotificacion();
+
+        // Mostrar en monitor
+        publicarEnMonitor(mensaje); // con repetición si lo requiere el CU
+
+        // Enviar mail
+        interfazEnvioMail.enviarMail(mailsResponsables, mensaje);
     }
 
 }

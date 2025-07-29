@@ -57,17 +57,20 @@ public class MenuPrincipal extends JFrame {
 
         // La pantalla crea una nueva instancia del gestor, pasándole los datos que necesita.
         System.out.println("Pantalla: Creando instancia del GestorRI...");
-        GestorRI gestor = new GestorRI(this.sesionActual, this.todasLasOrdenes);
+        Interfaz interfaz = new Interfaz();
+        GestorRI gestor = new GestorRI(this.sesionActual, this.todasLasOrdenes, interfaz);
+
         gestor.setEstadosDisponibles(this.estadosDisponibles);
+        gestor.setMotivosDisponibles(this.motivosDisponibles);
 
         // La pantalla usa el gestor para buscar los datos.
         System.out.println("Pantalla: Solicitando al gestor las órdenes a mostrar...");
-        List<OrdenDeInspeccion> ordenesAMostrar = gestor.buscarOrdenesRealizadasParaUsuarioLogueado();
+        List<OrdenDeInspeccion> ordenesAMostrar = gestor.buscarOrdenesDeInspeccion();
 
         // La pantalla abre la siguiente ventana y le pasa los datos.
         System.out.println("Pantalla: Abriendo la ventana de selección de órdenes...");
-        SeleccionOrdenDeInspeccion pantallaSeleccion = new SeleccionOrdenDeInspeccion(gestor, ordenesAMostrar);
-        // Opcional: Ocultar esta ventana mientras la otra está abierta
+        SeleccionOrdenDeInspeccion pantallaSeleccion = new SeleccionOrdenDeInspeccion(gestor, motivosDisponibles, estadosDisponibles);
+
         // this.setVisible(false);
     }
 }

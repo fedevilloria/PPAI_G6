@@ -25,6 +25,10 @@ public class Sismografo {
         this.historialEstados = historialEstados;
     }
 
+    public EstacionSismologica getEstacionSismologica() {
+        return estacionSismologica;
+    }
+
     public LocalDate getFechaAdquisicion() {
         return fechaAdquisicion;
     }
@@ -65,32 +69,33 @@ public class Sismografo {
         this.ultimoCambioEstado = cambio;
     }
 
-    public void ponerEnReparacion(Estado nuevoEstado, Empleado empleado, List<MotivoFueraDeServicio> motivos) {
+    public void ponerEnReparacion(Estado estado, Empleado responsable, List<MotivoFueraDeServicio> motivos) {
         LocalDateTime fechaHoraActual = LocalDateTime.now();
 
         // Finalizar el cambio de estado actual
-        for (CambioEstado cambio : historialEstados) {
-            if (cambio.esActual()) {
-                cambio.setFechaHoraFin(fechaHoraActual);
-                break;
-            }
+        CambioEstado cambioActual = this.buscarUltimoCambioEstado();
+        if (cambioActual != null) {
+            cambioActual.setFechaHoraFin(fechaHoraActual);
         }
 
-        // Crear el nuevo CambioEstado
-        CambioEstado nuevoCambio = new CambioEstado(
-                nuevoEstado,
-                fechaHoraActual,
-                null, // el nuevo cambio de estado aún está activo
-                motivos,
-                empleado
-        );
+        // Crear nuevo cambio de estado
+        CambioEstado nuevoCambio = new CambioEstado();
+        nuevoCambio.setEstado(estado);
+        nuevoCambio.setFechaHoraInicio(fechaHoraActual);
+        nuevoCambio.setEmpleadoResponsable(responsable);
+        nuevoCambio.setMotivosFueraDeServicio(motivos);
 
-        // Agregar a historial y actualizar puntero
         historialEstados.add(nuevoCambio);
-        this.ultimoCambioEstado = nuevoCambio;
+        this.setUltimoCambioEstado(nuevoCambio);
     }
 
-
-
+    public CambioEstado buscarUltimoCambioEstado() {
+        for (CambioEstado cambio : historialEstados) {
+            if (cambio.esEstadoActual()) {
+                return cambio;
+            }
+        }
+        return null;
+    }
 
 }

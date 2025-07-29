@@ -1,6 +1,8 @@
 package org.example.Main;
 import org.example.Modelos.*;
 import org.example.Gestores.GestorRI;
+import org.example.Vistas.Interfaz;
+import org.example.Vistas.InterfazEnvioMail;
 import org.example.Vistas.MenuPrincipal;
 
 import javax.swing.*;
@@ -44,6 +46,7 @@ public class MainCU37Test {
         orden.setFechaHoraFinalizacion(LocalDateTime.now().minusHours(5));
         orden.setNumeroDeOrden(001);
         orden.setEstacionSismologica(estacion);
+        orden.setEmpleado(empleado);
 
         List<OrdenDeInspeccion> ordenes = List.of(orden);
 
@@ -53,13 +56,14 @@ public class MainCU37Test {
         List<MotivoTipo> motivos = Arrays.asList(m1, m2);
 
         // Crear gestor
-        GestorRI gestor = new GestorRI(sesion, ordenes);
+        Interfaz interfaz = new Interfaz();
+        InterfazEnvioMail interfazEnvioMail = new InterfazEnvioMail();
+        GestorRI gestor = new GestorRI(sesion, ordenes, interfaz);
         gestor.setEstadosDisponibles(estadosDelSistema);
-
+        gestor.setInterfazEnvioMail(interfazEnvioMail);
+        gestor.setMotivosDisponibles(motivos);
 
         // La llamada para crear la ventana: Cambio-Viki
         SwingUtilities.invokeLater(() -> new MenuPrincipal(sesion, ordenes, motivos, estadosDelSistema));
-
-
     }
 }

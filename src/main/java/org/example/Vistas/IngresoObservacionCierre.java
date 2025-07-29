@@ -46,7 +46,7 @@ public class IngresoObservacionCierre extends JFrame {
                 gestor.tomarIngresoObservacionCierreInspeccion(observacion);
 
                 if (gestor.habilitarActualizarSituacionSismografo()) {
-                    new SeleccionMotivosYComentarios(gestor);
+                    new SeleccionMotivosYComentarios(gestor, motivosDisponibles);
                     dispose();
                 } else {
                     JOptionPane.showMessageDialog(null, "Ocurrió un error inesperado. Verifique los datos.");

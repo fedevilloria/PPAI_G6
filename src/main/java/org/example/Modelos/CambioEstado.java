@@ -66,7 +66,7 @@ public class CambioEstado {
         motivosFueraDeServicio.add(motivo);
     }
 
-    public boolean esActual() {
+    public boolean esEstadoActual() {
         return fechaHoraFin == null;
     }
 

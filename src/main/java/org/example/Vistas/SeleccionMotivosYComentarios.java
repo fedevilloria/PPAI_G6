@@ -22,11 +22,9 @@ public class SeleccionMotivosYComentarios extends JFrame {
     private List<MotivoTipo> motivosDisponibles;
     private GestorRI gestor;
 
-    public SeleccionMotivosYComentarios(GestorRI gestor) {
+    public SeleccionMotivosYComentarios(GestorRI gestor, List<MotivoTipo> motivosDisponibles) {
         this.gestor = gestor;
-
-        //Paso 6-Viki: Pantalla consulta motivos disponibles al Gestor
-        this.motivosDisponibles = gestor.buscarTiposDeMotivos();
+        this.motivosDisponibles = motivosDisponibles;
         this.checkBoxes = new ArrayList<>();
         this.camposTexto = new HashMap<>();
 
@@ -39,7 +37,7 @@ public class SeleccionMotivosYComentarios extends JFrame {
         panelPrincipal = new JPanel();
         panelPrincipal.setLayout(new BoxLayout(panelPrincipal, BoxLayout.Y_AXIS));
 
-        for (MotivoTipo motivo : motivosDisponibles) {
+        for (MotivoTipo motivo : this.motivosDisponibles) {
             JPanel fila = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
             JCheckBox checkBox = new JCheckBox(motivo.getDescripcion());
@@ -56,15 +54,19 @@ public class SeleccionMotivosYComentarios extends JFrame {
         }
 
         btnConfirmar = new JButton("Confirmar");
-        panelPrincipal.add(btnConfirmar);
         btnCancelar = new JButton("Cancelar");
-        panelPrincipal.add(btnCancelar);
 
+        // Panel de botones separado para mantener el layout ordenado
+        JPanel panelBotones = new JPanel();
+        panelBotones.add(btnConfirmar);
+        panelBotones.add(btnCancelar);
+
+        panelPrincipal.add(panelBotones);
         scrollPane.setViewportView(panelPrincipal);
         setContentPane(scrollPane);
         setVisible(true);
 
-        //CAMBIO-Viki: Agregamos los llamados al GestorRI como indica el diagrama
+        // Acción Confirmar
         btnConfirmar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -72,7 +74,7 @@ public class SeleccionMotivosYComentarios extends JFrame {
 
                 for (int i = 0; i < checkBoxes.size(); i++) {
                     JCheckBox checkBox = checkBoxes.get(i);
-                    MotivoTipo motivo = motivosDisponibles.get(i);
+                    MotivoTipo motivo = SeleccionMotivosYComentarios.this.motivosDisponibles.get(i);
                     JTextField campo = camposTexto.get(motivo);
 
                     if (checkBox.isSelected()) {
@@ -85,22 +87,16 @@ public class SeleccionMotivosYComentarios extends JFrame {
                     return;
                 }
 
-                // Cambio-Viki: Llamadas del diagrama de secuencia
-                // RI -> PantallaRI: tomarSeleccionMotivosTipos()
-                //PantallaRI -> GestorRI : tomarSeleccionMotivosTipos()
-                //RI -> PantallaRI : tomarIngresoComentarioMotivo()
-                //PantallaRI -> GestorRI : tomarIngresoComentarioMotivo()
-                //Paso 7a: Vista llama al GestorRI pasando los motivos seleccionados
+                // Nuevas llamadas al gestor (versión actualizada)
                 gestor.tomarSeleccionMotivosTipos(new ArrayList<>(motivosYComentarios.keySet()));
-                //Paso 7b: Vista llama al GestorRI pasando los comentarios por motivo
                 gestor.tomarIngresoComentarioMotivo(motivosYComentarios);
 
-                // Continuamos al siguiente paso
                 new ConfirmacionCierreOrden(gestor, gestor.getEstadosDisponibles());
                 dispose();
             }
         });
 
+        // Acción Cancelar
         btnCancelar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

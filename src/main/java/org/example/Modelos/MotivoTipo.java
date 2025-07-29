@@ -12,9 +12,10 @@ public class MotivoTipo {
         this.descripcion = descripcion;
     }
 
+
     //Metodo correcto segun el diagrama de secuencia - Viki
     public String getDescripcion() {
-        return null;
+        return descripcion;
     }
 
     public void setDescripcion(String descripcion) {

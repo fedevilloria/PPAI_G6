@@ -71,4 +71,10 @@ public class Empleado {
 
     public void esEmpleadoReparacion(){
     }
+
+    public boolean esResponsableDeReparacion() {
+        return rol != null && rol.esResponsableDeReparacion();
+    }
+
+
 }
